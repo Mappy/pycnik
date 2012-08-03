@@ -11,7 +11,7 @@ Mapnik XML stylesheet.
 - features:
     - allow using exotic number of zoom levels and tile sizes (computes scales denominators)
     - provides a mechanism for inheritance
-    - automatic add `cache-feature` attribute when using more than 2 styles
+    - automatically add `cache-feature` attribute when using more than 2 styles
 
 - caveats:
     - no possibility to use several similar symbolizers in the same rule
@@ -37,6 +37,10 @@ Testing
 To run the tests:
 
     $ python -m unittest discover -s test/
+
+or with nose:
+
+    $ nostests -v
 
 
 Getting started
