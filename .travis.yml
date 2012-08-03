@@ -8,7 +8,7 @@ before_install:
  - sudo apt-get update
  - sudo apt-get install libmapnik mapnik-utils python-mapnik
 install:
-  - pip install https://github.com/noirbizarre/pymapnik2.git
+  - pip install git+https://github.com/noirbizarre/pymapnik2.git
   - pip install . --use-mirrors
   - pip install -r requirements/test.pip --use-mirrors
 # command to run tests
