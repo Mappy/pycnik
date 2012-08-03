@@ -28,4 +28,6 @@ setup(
     packages=find_packages('pycnik'),
     install_requires=install_requires,
     entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
+    setup_requires=['nose>=1.0'],
+    test_suite='nose.collector'
 )
