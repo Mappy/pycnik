@@ -4,37 +4,55 @@
 testcase
 """
 import unittest
+from os.path import dirname, join
+from StringIO import StringIO
+
+from lxml import etree
 
 from pycnik.pycnik import translate
 
-xml_reference = """<?xml version='1.0' encoding='utf-8'?>
-<Map background-color="steelblue" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
-  <Style name="world_My Style">
-    <Rule>
-      <LineSymbolizer stroke="rgb(50%,50%,50%)" stroke-width="0.1"/>
-    </Rule>
-  </Style>
-  <Layer name="world" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
-    <StyleName>world_My Style</StyleName>
-    <Datasource>
-      <Parameter name="type">shape</Parameter>
-      <Parameter name="file">ne_110m_admin_0_countries.shp</Parameter>
-    </Datasource>
-  </Layer>
-</Map>
- """
 
-class TestOutput(unittest.TestCase):
+class TestXmlOutput(unittest.TestCase):
 
     def setUp(self):
-        self.output = translate("test/sample.py")
-        self.output = [line.strip() for line in self.output.split('\n')]
-        self.ref = [line.strip() for line in xml_reference.split('\n')]
+        "set up test fixtures"
+        self.parser = etree.XMLParser(dtd_validation=True)
+        self.dtd = etree.DTD(open(join(dirname(__file__), 'mapnik.dtd'), 'rb'))
+        self.output = StringIO(translate(join(dirname(__file__), 'sample.py')))
+        self.xml = etree.parse(self.output)
 
-    def test_xmloutput(self):
-        # make sure the shuffled sequence does not lose any elements
-        for out, ref in zip(self.output, self.ref):
-            self.assertEqual(out, ref)
+    @unittest.skip("Mapnik DTD not up-to-date")
+    def test_dtd(self):
+        self.assertTrue(self.dtd.validate(self.xml))
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_maptag(self):
+        maptag = self.xml.xpath('/Map')
+        self.assertEqual(maptag[0].attrib['background-color'], 'steelblue')
+        self.assertEqual(maptag[0].attrib['srs'],
+            "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+    def test_layertag(self):
+        laytag = self.xml.xpath('/Map/Layer')
+        self.assertEqual(laytag[0].attrib['name'], 'world')
+        self.assertEqual(laytag[0].attrib['srs'],
+            "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
+    def test_style(self):
+        style = self.xml.xpath('/Map/Layer/StyleName')
+        self.assertEqual(style[0].text, "world_My Style")
+
+    def test_datasource(self):
+        datasource = self.xml.xpath('/Map/Layer/Datasource')
+        self.assertTrue(datasource)
+
+    def test_paramtag(self):
+        datasource = self.xml.xpath('/Map/Layer/Datasource/Parameter')
+        self.assertEqual(len(datasource), 2)
+
+    def test_type(self):
+        params = self.xml.xpath("/Map/Layer/Datasource/Parameter[@name='type']")
+        self.assertEqual(params[0].text, "shape")
+
+    def test_file(self):
+        params = self.xml.xpath("/Map/Layer/Datasource/Parameter[@name='file']")
+        self.assertEqual(params[0].text, "ne_110m_admin_0_countries.shp")

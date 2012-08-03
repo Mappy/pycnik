@@ -6,8 +6,6 @@ from setuptools import setup, find_packages
 if not hasattr(sys, 'version_info') or sys.version_info < (2, 7, 0, 'final'):
     raise SystemExit("pycnik requires Python 2.7 or later.")
 
-install_requires = ['lxml']
-
 descr = open('README.rst').read()
 # hack for pypi wich doesn't support code-block directive
 descr = descr.replace('.. code-block:: python', '::')
@@ -31,8 +29,8 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Utilities'
         ],
-    packages=find_packages('pycnik'),
-    install_requires=install_requires,
+    packages=['pycnik'],
+    install_requires=['lxml'],
     entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
     setup_requires=['nose>=1.0'],
     test_suite='nose.collector'
