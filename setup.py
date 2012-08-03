@@ -12,6 +12,7 @@ setup(
     name='pycnik',
     version='1.0',
     description="Tool for generating Mapnik's stylesheets from python code",
+    long_description=open('README.rst').read(),
     url="https://github.com/ldgeo/pycnik.git",
     author='Ludovic Delauné',
     author_email="ludotux@gmail.com",
