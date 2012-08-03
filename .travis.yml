@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+  - "3.2"
+# Trigger system dependencies installation
+before_install:
+ - echo 'yes' | sudo add-apt-repository ppa:mapnik/nightly-2.0
+ - sudo apt-get update
+ - sudo apt-get install libmapnik mapnik-utils python-mapnik
+install:
+  - pip install . --use-mirrors
+  - pip install -r requirements/test.pip --use-mirrors
+# command to run tests
+script: nosetests
