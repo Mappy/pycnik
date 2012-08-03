@@ -1,6 +1,10 @@
 pycnik
 ======
 
+
+.. image:: https://secure.travis-ci.org/ldgeo/pycnik.png
+   :target: http://travis-ci.org/ldgeo/pycnik
+
 A simple Translator from Python code (with coding conventions) to
 Mapnik XML stylesheet.
 
