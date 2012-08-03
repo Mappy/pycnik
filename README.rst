@@ -12,11 +12,6 @@ Mapnik XML stylesheet.
 - caveats:
     - no possibility to use several similar symbolizers in the same rule
 
-TODO
-----
-
-- handle layer attributes other than `cache-feature`
-- handle RasterColorizer
 
 Install Pycnik
 --------------
