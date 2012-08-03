@@ -8,11 +8,16 @@ if not hasattr(sys, 'version_info') or sys.version_info < (2, 7, 0, 'final'):
 
 install_requires = ['lxml']
 
+descr = open('README.rst').read()
+# hack for pypi wich doesn't support code-block directive
+descr = descr.replace('.. code-block:: python', '::')
+descr = descr.replace('.. code-block:: bash', '::')
+
 setup(
     name='pycnik',
     version='1.0',
     description="Tool for generating Mapnik's stylesheets from python code",
-    long_description=open('README.rst').read(),
+    long_description=descr,
     url="https://github.com/ldgeo/pycnik.git",
     author='Ludovic Delauné',
     author_email="ludotux@gmail.com",

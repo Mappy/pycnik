@@ -20,7 +20,7 @@ Mapnik XML stylesheet.
 Install Pycnik
 --------------
 
-.. code:: bash
+.. code-block:: bash
 
     $ git clone https://github.com/ldgeo/pycnik
     $ cd pycnik
