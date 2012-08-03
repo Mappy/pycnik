@@ -7,14 +7,16 @@ import unittest
 from os.path import dirname, join
 from StringIO import StringIO
 
+from nose.tools import *
+
 from lxml import etree
 
 from pycnik.pycnik import translate
 
 
-class TestXmlOutput(unittest.TestCase):
+class TestXmlOutput(object):
 
-    def setUp(self):
+    def setup(self):
         "set up test fixtures"
         self.parser = etree.XMLParser(dtd_validation=True)
         self.dtd = etree.DTD(open(join(dirname(__file__), 'mapnik.dtd'), 'rb'))
@@ -27,32 +29,32 @@ class TestXmlOutput(unittest.TestCase):
 
     def test_maptag(self):
         maptag = self.xml.xpath('/Map')
-        self.assertEqual(maptag[0].attrib['background-color'], 'steelblue')
-        self.assertEqual(maptag[0].attrib['srs'],
+        assert_equal(maptag[0].attrib['background-color'], 'steelblue')
+        assert_equal(maptag[0].attrib['srs'],
             "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
     def test_layertag(self):
         laytag = self.xml.xpath('/Map/Layer')
-        self.assertEqual(laytag[0].attrib['name'], 'world')
-        self.assertEqual(laytag[0].attrib['srs'],
+        assert_equal(laytag[0].attrib['name'], 'world')
+        assert_equal(laytag[0].attrib['srs'],
             "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
     def test_style(self):
         style = self.xml.xpath('/Map/Layer/StyleName')
-        self.assertEqual(style[0].text, "world_My Style")
+        assert_equal(style[0].text, "world_My Style")
 
     def test_datasource(self):
         datasource = self.xml.xpath('/Map/Layer/Datasource')
-        self.assertTrue(datasource)
+        assert_true(datasource)
 
     def test_paramtag(self):
         datasource = self.xml.xpath('/Map/Layer/Datasource/Parameter')
-        self.assertEqual(len(datasource), 2)
+        assert_equal(len(datasource), 2)
 
     def test_type(self):
         params = self.xml.xpath("/Map/Layer/Datasource/Parameter[@name='type']")
-        self.assertEqual(params[0].text, "shape")
+        assert_equal(params[0].text, "shape")
 
     def test_file(self):
         params = self.xml.xpath("/Map/Layer/Datasource/Parameter[@name='file']")
-        self.assertEqual(params[0].text, "ne_110m_admin_0_countries.shp")
+        assert_equal(params[0].text, "ne_110m_admin_0_countries.shp")
