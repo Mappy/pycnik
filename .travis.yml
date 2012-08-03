@@ -1,15 +1,13 @@
 language: python
 python:
   - "2.7"
-  - "3.2"
 # Trigger system dependencies installation
 before_install:
- - echo 'yes' | sudo add-apt-repository ppa:mapnik/boost
- - echo 'yes' | sudo add-apt-repository ppa:mapnik/nightly-trunk
+ - echo 'yes' | sudo add-apt-repository ppa:mapnik/nightly-2.0
  - sudo apt-get update
- - sudo apt-get install libmapnik mapnik-utils python-mapnik libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libboost-regex-dev libboost-system-dev libboost-thread-dev
+ - sudo apt-get install libmapnik mapnik-utils python-mapnik
 install:
-  - pip install git+https://github.com/noirbizarre/pymapnik2.git
+  - ./travis_mapnik.sh
   - pip install . --use-mirrors
   - pip install -r requirements/test.pip --use-mirrors
 # command to run tests
