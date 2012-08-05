@@ -7,7 +7,6 @@ before_install:
  - sudo apt-get update
  - sudo apt-get install libmapnik mapnik-utils python-mapnik
 install:
-  - ./travis_mapnik.sh
   - pip install . --use-mirrors
   - pip install -r requirements/test.pip --use-mirrors
 # command to run tests

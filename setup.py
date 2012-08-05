@@ -30,7 +30,7 @@ setup(
         'Topic :: Utilities'
         ],
     packages=['pycnik'],
-    install_requires=['lxml'],
+    install_requires=['lxml', 'mapnik2'],
     entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
     setup_requires=['nose>=1.0'],
     test_suite='nose.collector'
