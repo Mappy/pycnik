@@ -87,7 +87,7 @@ def import_style(stylesheet):
     try:
         config = imp.load_source(stylesheet[:-3], stylesheet)
     except ImportError:
-        print "Unable to import stylesheet file %s" % stylesheet
+        print("Unable to import stylesheet file %s" % stylesheet)
 
     return config
 
@@ -148,12 +148,12 @@ def write_style(root, stylename, style, scales):
                 SubElement(rule, "MaxScaleDenominator",
                 zoom=str(first_level)).text = str(int(scales[first_level]['max']))
 
-        for attr, value in dico.iteritems():
+        for attr, value in dico.items():
             if attr in SYMBOLIZERS:
                 checktype(value, dict)
                 symb = SubElement(rule, "%sSymbolizer" % attr.title())
 
-                for symatt, symval in value.iteritems():
+                for symatt, symval in value.items():
                     if symb.tag in ("ShieldSymbolizer", "TextSymbolizer")\
                                 and symatt == 'value':
                         symb.text = CDATA(symval)
@@ -173,9 +173,9 @@ def translate(pysource, output_file=None):
     """
     source = import_style(pysource)
 
-    print "number of levels: %d" % source.Map.LEVEL_NUMBER
-    print "zoom factor: %d" % source.Map.ZOOM_FACTOR
-    print "using tile_size: %dpx" % source.Map.TILE_SIZE
+    print("number of levels: %d" % source.Map.LEVEL_NUMBER)
+    print("zoom factor: %d" % source.Map.ZOOM_FACTOR)
+    print("using tile_size: %dpx" % source.Map.TILE_SIZE)
 
     scales = compute_scales(
         source.Map.TILE_SIZE, source.Map.LEVEL_NUMBER,
@@ -185,7 +185,7 @@ def translate(pysource, output_file=None):
     root = Element("Map")
 
     # writing Map tag and attributes
-    for elem, value in source.Map.__dict__.iteritems():
+    for elem, value in source.Map.__dict__.items():
         if elem.startswith('__'):
             # skipping private var
             continue
@@ -199,7 +199,7 @@ def translate(pysource, output_file=None):
     # metawriters
     for meta in metawriters:
         metatag = SubElement(root, "MetaWriter")
-        for attr, value in meta.__dict__.iteritems():
+        for attr, value in meta.__dict__.items():
             if attr.startswith('__'):
                 # skipping private var
                 continue
@@ -214,12 +214,12 @@ def translate(pysource, output_file=None):
     # reorder style list
     layers = sorted(layers, key=lambda lay: source.Layer.painter.index(lay))
 
-    print "Layers info : "
+    print("Layers info : ")
     pprint.pprint(layers)
 
     # writing all styles at the top of the xml
     for lay in layers:
-        for stylname, style in lay.styles.iteritems():
+        for stylname, style in lay.styles.items():
             # making styles tags
             write_style(root, stylname, style, scales)
 
@@ -236,14 +236,14 @@ def translate(pysource, output_file=None):
             laytag.attrib["srs"] = lay.srs
 
         # style definition in order
-        for stylname, style in lay.styles.iteritems():
+        for stylname, style in lay.styles.items():
             stytag = SubElement(laytag, "StyleName")
             stytag.text = stylname
 
         # datasource parameters
         if getattr(lay, "datasource", None):
             datasrc = SubElement(laytag, 'Datasource')
-            for name, value in lay.datasource.iteritems():
+            for name, value in lay.datasource.items():
                 if name == "table":
                     continue
                 param = SubElement(datasrc, "Parameter", name=name)

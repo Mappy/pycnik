@@ -14,6 +14,7 @@ Mapnik XML stylesheet.
     - automatically add `cache-feature` attribute when using more than 2 styles
 
 - caveats:
+    - still work to do to be compliant with https://github.com/mapnik/mapnik/wiki/XMLConfigReference
     - no possibility to use several similar symbolizers in the same rule
 
 
@@ -26,6 +27,10 @@ Install Pycnik
     $ cd pycnik
     $ python setup.py install
 
+Or via pip::
+
+    $ pip install pycnik
+
 Dependencies:
 
     - python-mapnik (mapnik >= 2.x)
@@ -34,20 +39,24 @@ Dependencies:
 Testing
 -------
 
+Dependencies:
+
+    - pip install -r requirements/test.pip
+
 To run the tests:
 
     $ python -m unittest discover -s test/
 
 or with nose:
 
-    $ nostests -v
+    $ nosetests -v
 
 
 Getting started
 ---------------
 
-Pycnik use dynamic variable declaration, so you have to use the same keywords
-as the xml declaration syntax.
+Pycnik uses dynamic variable declaration,
+so you have to use the same keywords as the xml declaration syntax.
 
 example.py:
 

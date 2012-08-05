@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-this module contains class used in the python stylesheet
+This module contains classes and symbolizers used in the python stylesheet
 
-symobolizer list::
+Symbolizer list available in Mapnik::
 
     Line (for lines & polygons)
     Polygon (for polygons)
@@ -41,25 +41,28 @@ SYMBOLIZERS = (
     SHIELD, RASTER, MARKERS, BUILDING
 )
 
-def dict_merge(a, b):
+
+def dict_merge(adict, bdict):
     """
     recursively merges dict's. not just simple a['key'] = b['key'], if
     both a and bhave a key who's value is a dict then dict_merge is called
     on both values and the result stored in the returned dictionary.
 
     """
-    if not isinstance(b, dict):
-        return b
-    result = deepcopy(a)
-    for k, v in b.iteritems():
-        if k in result and isinstance(result[k], dict):
-                result[k] = dict_merge(result[k], v)
+    if not isinstance(bdict, dict):
+        return bdict
+    result = deepcopy(adict)
+    for key, value in bdict.items():
+        if key in result and isinstance(result[key], dict):
+            result[key] = dict_merge(result[key], value)
         else:
-            result[k] = deepcopy(v)
+            result[key] = deepcopy(value)
     return result
 
+
 class Map(object):
-    """used for carry Map Element attributes
+    """
+    used for carry Map Element attributes
     """
     # default values
     TILE_SIZE = 256
@@ -74,8 +77,8 @@ class Map(object):
 
 class MetaWriter(object):
     """
-    metawriter tags defined at the top of the xml and used
-    as symbolizer attributes
+    Metawriter tags defined at the top of the xml and used
+    as symbolizer's attributes
     """
     def __init__(self, **kwargs):
         for elem, value in kwargs.items():
@@ -84,24 +87,24 @@ class MetaWriter(object):
 
 class Style(tuple):
     """
-    represent a style within a mapnik layer
-
-    a style is a tuple containing a dictionnary for each level
-    with symbolizer and attributes
-
+    Represents a style within a mapnik layer.
+    A Layer can have several styles, defined by their name.
+    A style is a tuple containing a dictionnary for each level
+    with symbolizer and attributes. ex:
     (
-        {'line': {'fill': '#ffffff', ...}, 'point': {''}, # zoom 1
+        {'line': {'fill': '#ffffff', ...}, 'point': {''}, # zoom 0
          'filter': "[name] = 'road'" },
+        {'line': {'fill': '#ffffff', ...} }, # zoom 1
         {'line': {'fill': '#ffffff', ...} }, # zoom 2
-        {'line': {'fill': '#ffffff', ...} }, # zoom 3
     )
     """
     def __init__(self, iterable):
         super(Style, self).__init__(iterable)
 
     def __setitem__(self, key, val):
-        """val could be an index value or a slice object
-        in case of a slice object, spawn dict to every levels
+        """
+        `key` could be an index value or a slice object.
+        In case of a slice object, spawn dict to every levels.
         key.stop to simule real index
         """
         if isinstance(key, slice):
@@ -120,10 +123,10 @@ class Style(tuple):
 
 
 class Layer(object):
-    """class representing a mapnik Layer
+    """
+    Class representing a mapnik Layer
 
-    instance.style("stylename", nlevels=20)
-    create new style with nlevels available
+    LayerInstance.style("stylename") creates a new Layer "stylename"
 
     styles = {
         "style1": style_instance, ...
@@ -155,5 +158,5 @@ class Layer(object):
         if stylename in self.styles:
             return self.styles[stylename]
 
-        self.styles[stylename] = Style([{} for i in xrange(self.nlevels)])
+        self.styles[stylename] = Style([{} for _ in xrange(self.nlevels)])
         return self.styles[stylename]

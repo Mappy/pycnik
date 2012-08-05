@@ -27,6 +27,7 @@ Map.minimum_version = "2.0"
 Map.font_directory = "fonts"
 Map.buffer_size = 128
 
+
 ########
 # LAYERS
 ########
@@ -58,5 +59,5 @@ bnd.style("blue")[10:15] = {
     LINE: {
         'stroke-width': '12'
     }
-    # inheritance, the filter is conserved
+    # the filter is inherited from previous definition
 }

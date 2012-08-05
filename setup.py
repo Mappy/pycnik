@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- encoding=utf-8 -*-
 import sys
-from setuptools import setup, find_packages
+from setuptools import setup
 
 if not hasattr(sys, 'version_info') or sys.version_info < (2, 7, 0, 'final'):
     raise SystemExit("pycnik requires Python 2.7 or later.")
