@@ -11,6 +11,21 @@ descr = open('README.rst').read()
 descr = descr.replace('.. code-block:: python', '::')
 descr = descr.replace('.. code-block:: bash', '::')
 
+
+def install_requires():
+    """
+    don't try to override mapnik installation with the pypi version
+    """
+    req = ['lxml']
+    try:
+        import mapnik
+    except ImportError:
+        try:
+            import mapnik2
+        except:
+            req.req.append('mapnik2')
+    return req
+
 setup(
     name='pycnik',
     version='1.0',
@@ -30,7 +45,7 @@ setup(
         'Topic :: Utilities'
         ],
     packages=['pycnik'],
-    install_requires=['lxml', 'mapnik2'],
+    install_requires=install_requires(),
     entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
     setup_requires=['nose>=1.0'],
     test_suite='nose.collector'
