@@ -11,7 +11,7 @@ from nose.tools import *
 
 from lxml import etree
 
-from pycnik.pycnik import translate
+from pycnik.pycnik import translate, import_style
 
 
 class TestXmlOutput(object):
@@ -20,7 +20,8 @@ class TestXmlOutput(object):
         "set up test fixtures"
         self.parser = etree.XMLParser(dtd_validation=True)
         self.dtd = etree.DTD(open(join(dirname(__file__), 'mapnik.dtd'), 'rb'))
-        self.output = StringIO(translate(join(dirname(__file__), 'sample.py')))
+        self.source = import_style(join(dirname(__file__), 'sample.py'))
+        self.output = StringIO(translate(self.source))
         self.xml = etree.parse(self.output)
 
     @unittest.skip("Mapnik DTD not up-to-date")

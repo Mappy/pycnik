@@ -2,8 +2,9 @@
 # -*- encoding=utf-8 -*-
 import argparse
 
+
 def main():
-    from .pycnik import translate
+    from .pycnik import translate, import_style
 
     parser = argparse.ArgumentParser(
         description="Translate Python code to Mapnik XML stylesheet"
@@ -14,7 +15,9 @@ def main():
 
     args = parser.parse_args()
 
+    source = import_style(args.stylesheet)
+
     if not args.output_file:
-        print(translate(args.stylesheet))
+        print(translate(source))
     else:
-        translate(args.stylesheet, output_file=args.output_file)
+        translate(source, output_file=args.output_file)

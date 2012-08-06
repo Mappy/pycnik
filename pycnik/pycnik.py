@@ -165,14 +165,12 @@ def write_style(root, stylename, style, scales):
                 filt.text = CDATA(value)
 
 
-def translate(pysource, output_file=None):
+def translate(source, output_file=None):
     """
     TODO: check styles duplicatas
 
     if `output_file` is None, returns xml as string
     """
-    source = import_style(pysource)
-
     print("number of levels: %d" % source.Map.LEVEL_NUMBER)
     print("zoom factor: %d" % source.Map.ZOOM_FACTOR)
     print("using tile_size: %dpx" % source.Map.TILE_SIZE)
@@ -189,7 +187,7 @@ def translate(pysource, output_file=None):
         if elem.startswith('__'):
             # skipping private var
             continue
-        if elem in ('LEVEL_NUMBER','TILE_SIZE','ZOOM_FACTOR'):
+        if elem in ('LEVEL_NUMBER', 'TILE_SIZE', 'ZOOM_FACTOR'):
             continue
         root.attrib[replace_underscore(elem)] = str(value)
 
