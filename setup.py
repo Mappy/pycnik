@@ -23,7 +23,7 @@ def install_requires():
         try:
             import mapnik2
         except:
-            req.req.append('mapnik2')
+            req.append('mapnik2')
     return req
 
 setup(
