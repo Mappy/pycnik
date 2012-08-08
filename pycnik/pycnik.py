@@ -156,13 +156,13 @@ def write_style(root, stylename, style, scales):
                 for symatt, symval in value.items():
                     if symb.tag in ("ShieldSymbolizer", "TextSymbolizer")\
                                 and symatt == 'value':
-                        symb.text = CDATA(symval)
+                        symb.text = CDATA(str(symval))
                         continue
-                    symb.attrib[symatt] = symval
+                    symb.attrib[symatt] = str(symval)
 
             if attr == 'filter':
                 filt = SubElement(rule, "Filter")
-                filt.text = CDATA(value)
+                filt.text = CDATA(str(value))
 
 
 def translate(source, output_file=None):
