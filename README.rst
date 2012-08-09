@@ -125,6 +125,8 @@ example.py:
         # inheritance, the filter is conserved
     }
 
+You can see more examples in the `test/resources <http://github.com/ldgeo/pycnik/tree/master/test/resources>`_ directory.
+
 
 Generate mapnik XML
 -------------------
