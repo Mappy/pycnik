@@ -2,6 +2,7 @@ from pycnik.model import *
 
 Map.srs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 Map.background_color = "steelblue"
+Map.minimum_version = "2.0"
 
 world = Layer("world")
 world.srs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
