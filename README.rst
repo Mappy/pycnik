@@ -41,7 +41,7 @@ Testing
 
 Dependencies:
 
-    - pip install -r requirements/test.pip
+    $ pip install -r requirements/test.pip
 
 To run the tests:
 
