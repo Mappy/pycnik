@@ -43,11 +43,7 @@ Dependencies:
 
     $ pip install -r requirements/test.pip
 
-To run the tests:
-
-    $ python -m unittest discover -s test/
-
-or with nose:
+To run the tests with nose:
 
     $ nosetests -v
 
@@ -118,12 +114,11 @@ example.py:
         'filter': "[countrycode]='ESP'"
     }
 
+    # change the stroke width from level 10 to 15
+    # the `filter` and `fill` attributes are preserved
     bnd.style("blue")[10:15] = {
-        LINE: {
-            'stroke-width': '12'
-        }
-        # inheritance, the filter is conserved
-    }
+        LINE: {'stroke-width': '12'}}
+
 
 You can see more examples in the `test/resources <http://github.com/ldgeo/pycnik/tree/master/test/resources>`_ directory.
 
