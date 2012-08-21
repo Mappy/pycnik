@@ -48,10 +48,14 @@ natural_earth.style()[:3] = {
 }
 
 bnd.style("blue")[0:19] = {
-    LINE: {
+    LINE: [{
         'fill': 'rgb(255,0,0)',
         'stroke-width': '4'
-    },
+    }, {
+        'fill': 'rgb(188,155,200)',
+        'stroke-width': '6'
+    }],
+    'linepattern': {'file': 'sample.png'},
     'filter': "[countrycode]='ESP'"
 }
 

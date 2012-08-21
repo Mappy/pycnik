@@ -22,3 +22,10 @@ class TestStyle(object):
         assert_equal(len(xml.xpath(path)), 1)
         style = xml.xpath(path)[0]
         assert_equal(style.text, "natural_earth_default")
+
+    def test_same_symbolizer_in_single_style(self):
+        '''Should serialize same symbolizer in a single style'''
+        xml = parse_resource('natural.py')
+        assert_equal(len(xml.xpath('/Map/Layer/StyleName')), 2)
+        style = xml.xpath('/Map/Layer/StyleName')[0]
+        assert_equal(style.text, "natural_earth_default")
