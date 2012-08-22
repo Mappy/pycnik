@@ -48,10 +48,14 @@ natural_earth.style()[:3] = {
 }
 
 bnd.style("blue")[0:19] = {
-    LINE: {
+    LINE: [{
         'fill': 'rgb(255,0,0)',
         'stroke-width': '4'
-    },
+    }, {
+        'fill': 'rgb(188,155,200)',
+        'stroke-width': '6'
+    }],
+    'linepattern': {'file': 'sample.png'},
     'filter': "[countrycode]='ESP'"
 }
 
@@ -59,5 +63,21 @@ bnd.style("blue")[10:15] = {
     LINE: {
         'stroke-width': '12'
     }
+    # the filter is inherited from previous definition
+}
+
+bnd.style("green")[0:19] = {
+    LINE: [{
+        'fill': 'rgb(255,0,0)',
+        'stroke-width': '4'
+    }, {
+        'fill': 'rgb(188,155,200)',
+        'stroke-width': '6'
+    }],
+    'filter': "[countrycode]='FRA'"
+}
+
+bnd.style("green")[10:15] = {
+    'linepattern': {'file': 'sample.png'}, 'stroke-width': '12'
     # the filter is inherited from previous definition
 }

@@ -150,19 +150,31 @@ def write_style(root, stylename, style, scales):
 
         for attr, value in dico.items():
             if attr in SYMBOLIZERS:
-                checktype(value, dict)
-                symb = SubElement(rule, "%sSymbolizer" % attr.title())
+                if isinstance(value, list):
+                    for subvalue in value:
+                        symb = SubElement(rule, "%sSymbolizer" % attr.title())
+                        for symatt, symval in subvalue.items():
+                            symb.attrib[symatt] = str(symval)
+                else:
+                    checktype(value, dict)
 
-                for symatt, symval in value.items():
-                    if symb.tag in ("ShieldSymbolizer", "TextSymbolizer")\
-                                and symatt == 'value':
-                        symb.text = CDATA(str(symval))
-                        continue
-                    symb.attrib[symatt] = str(symval)
+                    symb = SubElement(rule, "%sSymbolizer" % attr.title())
+
+                    for symatt, symval in value.items():
+                        if symb.tag in ("ShieldSymbolizer", "TextSymbolizer")\
+                                    and symatt == 'value':
+                            symb.text = CDATA(str(symval))
+                            continue
+                        symb.attrib[symatt] = str(symval)
 
             if attr == 'filter':
                 filt = SubElement(rule, "Filter")
                 filt.text = CDATA(str(value))
+
+            if attr == 'linepattern':
+                symb = SubElement(rule, "LinePatternSymbolizer")
+                for symatt, symval in value.items():
+                    symb.attrib[symatt] = str(symval)
 
 
 def translate(source, output_file=None):
