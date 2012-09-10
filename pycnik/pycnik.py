@@ -19,8 +19,9 @@ Simple Translator from Python code to Mapnik XML stylesheet.
 
 """
 import imp
+import inspect
 import pprint
-from os.path import exists
+from os.path import exists, join, dirname, abspath, isabs
 from itertools import groupby
 
 from lxml.etree import Element, SubElement, CDATA, tostring
@@ -30,7 +31,7 @@ try:
 except ImportError:
     import mapnik2 as mapnik
 
-from model import SYMBOLIZERS
+from model import SYMBOLIZERS, Map, MetaWriter, Style, Layer
 
 # assume that a pixel on a screen is 0.28mm on each side
 PIXEL_SIZE = 0.00028
@@ -273,3 +274,45 @@ def translate(source, output_file=None):
             pretty_print=True,
             xml_declaration=True,
             encoding='utf-8'))
+
+
+def copy_style(filename, features=[], exclude=[]):
+    '''
+    Copy style from another stylesheet into the current one.
+
+    :param filename: pycnik stylesheet filename to copy (must ends with .py)
+    :param features: a feature list to copy. If empty, all features are copied.
+    :param exclude: a feature list to exclude from copy.
+    '''
+    stack = inspect.stack()[1]
+    caller = inspect.getmodule(stack[0])
+
+    if not filename.endswith('.py'):
+        raise ValueError("Stylesheet %s is not a python file" % filename)
+
+    if not isabs(filename):
+        filename = abspath(join(dirname(caller.__file__), filename))
+
+    if not exists(filename):
+        raise IOError("File %s not found" % filename)
+
+    try:
+        stylesheet = imp.load_source(filename[:-3], filename)
+    except ImportError:
+        print("Unable to import stylesheet file %s" % filename)
+
+    if isinstance(features, str):
+        features = [features]
+
+    if not features:
+        features = []
+        for attr in dir(stylesheet):
+            if inspect.isbuiltin(getattr(stylesheet, attr)) or attr.startswith('_'):
+                continue
+
+            if isinstance(attr, (str, int, float, dict, tuple, list, Map, MetaWriter, Style, Layer)):
+                features.append(attr)
+
+    for feature in features:
+        if feature not in exclude:
+            setattr(caller, feature, getattr(stylesheet, feature))
