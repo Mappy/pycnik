@@ -139,15 +139,12 @@ def write_style(root, stylename, style, scales):
 
         # scale denominator
         if last_level != len(style) - 1:
-            SubElement(rule, "MinScaleDenominator",
-                zoom=str(last_level)).text = str(int(scales[last_level]['min']))
+            SubElement(rule, "MinScaleDenominator").text = str(int(scales[last_level]['min']))
             if first_level != 0:
-                SubElement(rule, "MaxScaleDenominator",
-                zoom=str(first_level)).text = str(int(scales[first_level]['max']))
+                SubElement(rule, "MaxScaleDenominator").text = str(int(scales[first_level]['max']))
         else:
             if first_level != 0:
-                SubElement(rule, "MaxScaleDenominator",
-                zoom=str(first_level)).text = str(int(scales[first_level]['max']))
+                SubElement(rule, "MaxScaleDenominator").text = str(int(scales[first_level]['max']))
 
         for attr, value in dico.items():
             if attr in SYMBOLIZERS:
