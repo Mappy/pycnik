@@ -7,6 +7,7 @@ Map.background_color = 'steelblue'
 
 natural_earth.style()[2] = {
     RASTER: {
-        'scaling': 'fast'
+        'scaling': 'fast',
+        'opacity': '0.5'
     }
 }

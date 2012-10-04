@@ -58,8 +58,7 @@ class TestCopyLayers(object):
         nodes = xml.xpath('/Map/Style[@name="natural_earth_default"]/Rule')
         assert_equal(len(nodes), 2)
         for node in nodes:
-            print node.xpath('MinScaleDenominator')[0].attrib['zoom']
-            if node.xpath('MinScaleDenominator')[0].attrib['zoom'] == '2':
+            if len(node.xpath('RasterSymbolizer')[0].attrib) == 2:
                 assert_equal(node.xpath('RasterSymbolizer')[0].attrib['scaling'], 'fast')
             else:
                 assert_equal(node.xpath('RasterSymbolizer')[0].attrib['scaling'], 'bilinear')
