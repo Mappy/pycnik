@@ -28,7 +28,7 @@ def install_requires():
 
 setup(
     name='pycnik',
-    version='1.3',
+    version='1.4.dev',
     description="Tool for generating Mapnik's stylesheets from python code",
     long_description=descr,
     url="https://github.com/ldgeo/pycnik.git",
