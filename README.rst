@@ -23,7 +23,7 @@ Install Pycnik
 
 .. code-block:: bash
 
-    $ git clone https://github.com/MappySA/pycnik
+    $ git clone https://github.com/MappySA/pycnik.git
     $ cd pycnik
     $ python setup.py install
 
