@@ -2,8 +2,8 @@ pycnik
 ======
 
 
-.. image:: https://secure.travis-ci.org/MappySA/pycnik.png
-   :target: http://travis-ci.org/MappySA/pycnik
+.. image:: https://secure.travis-ci.org/Mappy/pycnik.png
+   :target: http://travis-ci.org/Mappy/pycnik
 
 A simple Translator from Python code (with coding conventions) to
 Mapnik XML stylesheet.
@@ -23,7 +23,7 @@ Install Pycnik
 
 .. code-block:: bash
 
-    $ git clone https://github.com/MappySA/pycnik.git
+    $ git clone https://github.com/Mappy/pycnik.git
     $ cd pycnik
     $ python setup.py install
 
@@ -120,7 +120,7 @@ example.py:
         LINE: {'stroke-width': '12'}}
 
 
-You can see more examples in the `test/resources <http://github.com/ldgeo/pycnik/tree/master/test/resources>`_ directory.
+You can see more examples in the `test/resources <http://github.com/Mappy/pycnik/tree/master/test/resources>`_ directory.
 
 
 Generate mapnik XML
