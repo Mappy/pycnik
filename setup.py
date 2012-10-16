@@ -31,7 +31,7 @@ setup(
     version='1.4.dev',
     description="Tool for generating Mapnik's stylesheets from python code",
     long_description=descr,
-    url="https://github.com/MappySA/pycnik.git",
+    url="https://github.com/Mappy/pycnik.git",
     author='Ludovic Delauné',
     author_email="ludovic.delaune@mappy.com",
     classifiers=[
