@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- encoding=utf-8 -*-
+import os
 import sys
 from setuptools import setup
 
@@ -10,6 +11,10 @@ descr = open('README.rst').read()
 # hack for pypi wich doesn't support code-block directive
 descr = descr.replace('.. code-block:: python', '::')
 descr = descr.replace('.. code-block:: bash', '::')
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
 
 
 def install_requires():
