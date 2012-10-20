@@ -15,7 +15,6 @@ Mapnik XML stylesheet.
 
 - caveats:
     - still work to do to be compliant with https://github.com/mapnik/mapnik/wiki/XMLConfigReference
-    - no possibility to use several similar symbolizers in the same rule
 
 
 Install Pycnik
