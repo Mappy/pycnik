@@ -2,6 +2,7 @@
 # -*- encoding=utf-8 -*-
 import argparse
 
+__version__ = '1.4.dev'
 
 def main():
     from .pycnik import translate, import_style

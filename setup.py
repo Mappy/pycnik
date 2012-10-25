@@ -13,7 +13,7 @@ descr = descr.replace('.. code-block:: python', '::')
 descr = descr.replace('.. code-block:: bash', '::')
 
 if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
+    os.system('python setup.py register sdist upload')
     sys.exit()
 
 
@@ -33,7 +33,7 @@ def install_requires():
 
 setup(
     name='pycnik',
-    version='1.4.dev',
+    version=__import__('pycnik').__version__,
     description="Tool for generating Mapnik's stylesheets from python code",
     long_description=descr,
     url="https://github.com/Mappy/pycnik.git",
