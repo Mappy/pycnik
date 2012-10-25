@@ -1,20 +1,33 @@
 #!/usr/bin/python
 # -*- encoding=utf-8 -*-
 import os
+import re
 import sys
 from setuptools import setup
 
 if not hasattr(sys, 'version_info') or sys.version_info < (2, 7, 0, 'final'):
     raise SystemExit("pycnik requires Python 2.7 or later.")
 
-descr = open('README.rst').read()
-# hack for pypi wich doesn't support code-block directive
-descr = descr.replace('.. code-block:: python', '::')
-descr = descr.replace('.. code-block:: bash', '::')
-
 if sys.argv[-1] == 'publish':
     os.system('python setup.py register sdist upload')
     sys.exit()
+
+
+def rst(filename):
+    '''
+    Load rst file and sanitize it for PyPI.
+    Remove unsupported tags:
+     - code-block directive
+    '''
+    content = open(filename).read()
+    return re.sub(r'\.\.\s? code-block::\s*(\w|\+)+', '::', content)
+
+
+long_description = '\n'.join((
+    rst('README.rst'),
+    rst('CHANGELOG.rst'),
+    ''
+))
 
 
 def install_requires():
@@ -35,7 +48,7 @@ setup(
     name='pycnik',
     version=__import__('pycnik').__version__,
     description="Tool for generating Mapnik's stylesheets from python code",
-    long_description=descr,
+    long_description=long_description,
     url="https://github.com/Mappy/pycnik.git",
     author='Ludovic Delauné',
     author_email="ludovic.delaune@mappy.com",
