@@ -21,7 +21,7 @@ from collections import OrderedDict
 from copy import deepcopy
 
 __all__ = (
-    "Map", "Layer", "Style", "MetaWriter",
+    "Map", "Layer", "Style", "MetaWriter", "MetaCollector",
     "LINE", "POLYGON", "POINT", "TEXT",
     "SHIELD", "RASTER", "MARKERS", "BUILDING"
 )
@@ -79,6 +79,15 @@ class MetaWriter(object):
     """
     Metawriter tags defined at the top of the xml and used
     as symbolizer's attributes
+    """
+    def __init__(self, **kwargs):
+        for elem, value in kwargs.items():
+            setattr(self, elem, value)
+
+
+class MetaCollector(object):
+    """
+    MetaCollector (replacement for MetaWriter made in Mappy)
     """
     def __init__(self, **kwargs):
         for elem, value in kwargs.items():

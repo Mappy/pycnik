@@ -31,7 +31,7 @@ try:
 except ImportError:
     import mapnik2 as mapnik
 
-from model import SYMBOLIZERS, Map, MetaWriter, Style, Layer
+from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
 # assume that a pixel on a screen is 0.28mm on each side
 PIXEL_SIZE = 0.00028
@@ -160,7 +160,7 @@ def write_style(root, stylename, style, scales):
 
                     for symatt, symval in value.items():
                         if symb.tag in ("ShieldSymbolizer", "TextSymbolizer")\
-                                    and symatt == 'value':
+                                and symatt == 'value':
                             symb.text = CDATA(str(symval))
                             continue
                         symb.attrib[symatt] = str(symval)
@@ -188,7 +188,7 @@ def translate(source, output_file=None):
     scales = compute_scales(
         source.Map.TILE_SIZE, source.Map.LEVEL_NUMBER,
         source.Map.ZOOM_FACTOR, source.Map.srs
-        )
+    )
 
     root = Element("Map")
 
@@ -202,7 +202,10 @@ def translate(source, output_file=None):
         root.attrib[replace_underscore(elem)] = str(value)
 
     metawriters = [metaw for metaw in source.__dict__.itervalues()
-                    if isinstance(metaw, source.MetaWriter)]
+        if isinstance(metaw, source.MetaWriter)]
+
+    metacollectors = [metaw for metaw in source.__dict__.itervalues()
+        if isinstance(metaw, source.MetaCollector)]
 
     # metawriters
     for meta in metawriters:
@@ -213,9 +216,18 @@ def translate(source, output_file=None):
                 continue
             metatag.attrib[replace_underscore(attr)] = value
 
+    # metacollectors
+    for meta in metacollectors:
+        metatag = SubElement(root, "MetaCollector")
+        for attr, value in meta.__dict__.items():
+            if attr.startswith('__'):
+                # skipping private var
+                continue
+            metatag.attrib[replace_underscore(attr)] = value
+
     # retrieve all instances of Layer
     layers = [layer for layer in source.__dict__.itervalues()
-                if isinstance(layer, source.Layer)]
+        if isinstance(layer, source.Layer)]
 
     # remove pointers to the same id
     layers = list(set(layers))
@@ -307,7 +319,8 @@ def copy_style(filename, features=[], exclude=[]):
             if inspect.isbuiltin(getattr(stylesheet, attr)) or attr.startswith('_'):
                 continue
 
-            if isinstance(attr, (str, int, float, dict, tuple, list, Map, MetaWriter, Style, Layer)):
+            if isinstance(attr, (str, int, float, dict, tuple, list, Map,
+                    MetaWriter, MetaCollector, Style, Layer)):
                 features.append(attr)
 
     for feature in features:
