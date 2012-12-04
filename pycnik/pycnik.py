@@ -272,6 +272,14 @@ def translate(source, output_file=None):
                 SubElement(datasrc, "Parameter",
                     name="table").text = CDATA(lay.table)
 
+        # get all other attributes
+        for attr, value in lay.__dict__.items():
+            if attr.lower() in ("styles", "srs", "datasource", "table", "nlevels"):
+                continue
+            if inspect.isbuiltin(getattr(lay, attr)) or attr.startswith('_'):
+                continue
+            laytag.attrib[replace_underscore(attr)] = str(value)
+
     if not output_file:
         return tostring(root,
             pretty_print=True,

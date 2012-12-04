@@ -41,3 +41,10 @@ class TestLayers(object):
         assert_equal(len(layers), 2)
         assert_equal(layers[0].attrib['name'], 'natural_earth')
         assert_equal(layers[1].attrib['name'], 'country boundaries')
+
+    def test_layer_attribute(self):
+        '''Should get layer attributes'''
+        xml = parse_resource('natural.py')
+        layers = xml.xpath('/Map/Layer')
+        assert_equal(len(layers[1].attrib), 3)
+        assert_equal(layers[1].attrib['buffer-size'], '0')

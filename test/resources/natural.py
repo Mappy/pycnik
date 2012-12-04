@@ -37,6 +37,7 @@ natural_earth.datasource = NATURAL_RASTER
 bnd = Layer("country boundaries")
 bnd.datasource = DATABASE_PARAM
 bnd.table = "schema.boundaries"
+bnd.buffer_size = 0
 
 ########
 # STYLES
@@ -78,6 +79,9 @@ bnd.style("green")[0:19] = {
 }
 
 bnd.style("green")[10:15] = {
-    'linepattern': {'file': 'sample.png'}, 'stroke-width': '12'
+    'linepattern': {
+        'file': 'sample.png'
+    },
+    'stroke-width': '12'
     # the filter is inherited from previous definition
 }
