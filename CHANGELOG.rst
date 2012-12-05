@@ -9,7 +9,7 @@ Changelog
 1.3.2 (2012-12-05)
 ------------------
 
-- allows any attributes to layers
+- allowing any attributes for layer tag
 
 1.3.1 (2012-10-25)
 ------------------
