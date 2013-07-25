@@ -7,7 +7,7 @@ env:
 before_install:
  - echo 'yes' | sudo add-apt-repository ppa:mapnik/v$PPA_VERSION
  - sudo apt-get update -qq
- - sudo aptitude install -y -q10 libmapnik libmapnik-dev mapnik-utils
+ - sudo apt-get install -y libmapnik libmapnik-dev mapnik-utils
 install:
   - pip install -U mapnik2==$BINDINGS_VERSION --use-mirrors
   - pip install -U . --use-mirrors
