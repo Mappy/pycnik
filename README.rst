@@ -4,6 +4,10 @@ pycnik
 
 .. image:: https://secure.travis-ci.org/Mappy/pycnik.png
    :target: http://travis-ci.org/Mappy/pycnik
+.. image:: https://pypip.in/v/pycnik/badge.png
+   :target: https://crate.io/packages/pycnik
+.. image:: https://pypip.in/d/pycnik/badge.png
+   :target: https://crate.io/packages/pycnik
 
 A simple Translator from Python code (with coding conventions) to
 Mapnik XML stylesheet.
