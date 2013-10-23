@@ -8,6 +8,9 @@ pycnik
    :target: https://crate.io/packages/pycnik
 .. image:: https://pypip.in/d/pycnik/badge.png
    :target: https://crate.io/packages/pycnik
+.. image:: https://d2weczhvl823v0.cloudfront.net/Mappy/pycnik/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
 
 A simple Translator from Python code (with coding conventions) to
 Mapnik XML stylesheet.
@@ -132,7 +135,5 @@ Generate mapnik XML
     $ pycnik example.py -o example.xml
 
 
-.. image:: https://d2weczhvl823v0.cloudfront.net/Mappy/pycnik/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
+
 
