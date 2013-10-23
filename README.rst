@@ -130,3 +130,9 @@ Generate mapnik XML
 -------------------
 
     $ pycnik example.py -o example.xml
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/Mappy/pycnik/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
