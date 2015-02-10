@@ -33,9 +33,12 @@ except ImportError:
 
 from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
-# assume that a pixel on a screen is 0.28mm on each side
+# assume that a pixel on a screen is 0.28mm on each side for metric projs
 PIXEL_SIZE = 0.00028
 
+# assume that a pixel on a screen is 3.55714704265e-09 on each side for latlon
+# projs
+PIXEL_SIZE_DEG= 3.55714704265e-09
 
 def compute_scales(tile_size, nlevels, zoom_factor, srs):
     """
@@ -49,11 +52,21 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
         ...
     }
     """
+
+    lonlat_proj = '+init=epsg:4326'
+
     prj = mapnik.Projection(srs)
     earth_width = abs(prj.forward(mapnik.Coord(-180, 0)).x * 2)
-    # m/pixel for the first zoom ie 0
     scales = {}
-    scales[0] = {"min": earth_width / (tile_size * PIXEL_SIZE), 'max': None}
+
+    # lonlat projs
+    if srs == lonlat_proj:
+        pixel_size = PIXEL_SIZE_DEG
+    # metric projs
+    else:
+        pixel_size = PIXEL_SIZE
+
+    scales[0] = {"min": earth_width / (tile_size * pixel_size), 'max': None}
 
     # for other zoom, based on the zoom_factor
     for lev in range(1, nlevels):
@@ -68,7 +81,6 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
         }
 
     return scales
-
 
 def checktype(value, typ):
     """
