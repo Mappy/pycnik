@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.4 (current)
+1.4 (2015-02-23)
 -------------
 
-- Nothing yet
+- fix compute_scales for WGS84  
 
 1.3.2 (2012-12-05)
 ------------------
