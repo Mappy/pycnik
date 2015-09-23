@@ -44,6 +44,8 @@ def install_requires():
             req.append('mapnik2')
     return req
 
+develop_requirements = install_requires() + ['nose>=1.0']
+
 setup(
     name='pycnik',
     version=__import__('pycnik').__version__,
@@ -64,7 +66,9 @@ setup(
         ],
     packages=['pycnik'],
     install_requires=install_requires(),
+    extras_require={
+        'develop': develop_requirements,
+    },
     entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
-    setup_requires=['nose>=1.0'],
     test_suite='nose.collector'
 )
