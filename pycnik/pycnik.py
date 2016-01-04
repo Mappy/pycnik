@@ -80,6 +80,7 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
 
     return scales
 
+
 def checktype(value, typ):
     """
     raise a TypeError when `value` is not an instance of `typ`
@@ -212,10 +213,10 @@ def translate(source, output_file=None):
         root.attrib[replace_underscore(elem)] = str(value)
 
     metawriters = [metaw for metaw in source.__dict__.itervalues()
-        if isinstance(metaw, source.MetaWriter)]
+                   if isinstance(metaw, source.MetaWriter)]
 
     metacollectors = [metaw for metaw in source.__dict__.itervalues()
-        if isinstance(metaw, source.MetaCollector)]
+                      if isinstance(metaw, source.MetaCollector)]
 
     # metawriters
     for meta in metawriters:
@@ -237,7 +238,7 @@ def translate(source, output_file=None):
 
     # retrieve all instances of Layer
     layers = [layer for layer in source.__dict__.itervalues()
-        if isinstance(layer, source.Layer)]
+              if isinstance(layer, source.Layer)]
 
     # remove pointers to the same id
     layers = list(set(layers))
@@ -279,8 +280,7 @@ def translate(source, output_file=None):
                 param = SubElement(datasrc, "Parameter", name=name)
                 param.text = value
             if getattr(lay, "table", None):
-                SubElement(datasrc, "Parameter",
-                    name="table").text = CDATA(lay.table)
+                SubElement(datasrc, "Parameter", name="table").text = CDATA(lay.table)
 
         # get all other attributes
         for attr, value in lay.__dict__.items():
@@ -291,16 +291,13 @@ def translate(source, output_file=None):
             laytag.attrib[replace_underscore(attr)] = str(value)
 
     if not output_file:
-        return tostring(root,
-            pretty_print=True,
-            xml_declaration=True,
-            encoding='utf-8')
+        return tostring(root, pretty_print=True, xml_declaration=True, encoding='utf-8')
 
     with open(output_file, 'wb') as out:
         out.write(tostring(root,
-            pretty_print=True,
-            xml_declaration=True,
-            encoding='utf-8'))
+                           pretty_print=True,
+                           xml_declaration=True,
+                           encoding='utf-8'))
 
 
 def copy_style(filename, features=[], exclude=[]):
@@ -338,7 +335,7 @@ def copy_style(filename, features=[], exclude=[]):
                 continue
 
             if isinstance(attr, (str, int, float, dict, tuple, list, Map,
-                    MetaWriter, MetaCollector, Style, Layer)):
+                                 MetaWriter, MetaCollector, Style, Layer)):
                 features.append(attr)
 
     for feature in features:
