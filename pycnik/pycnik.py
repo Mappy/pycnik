@@ -25,11 +25,7 @@ from os.path import exists, join, dirname, abspath, isabs
 from itertools import groupby
 
 from lxml.etree import Element, SubElement, CDATA, tostring
-
-try:
-    import mapnik
-except ImportError:
-    import mapnik2 as mapnik
+from pyproj import Proj
 
 from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
@@ -38,7 +34,8 @@ PIXEL_SIZE = 0.00028
 
 # assume that a pixel on a screen is 3.55714704265e-09 on each side for latlon
 # projs
-PIXEL_SIZE_DEG= 3.55714704265e-09
+PIXEL_SIZE_DEG = 3.55714704265e-09
+
 
 def compute_scales(tile_size, nlevels, zoom_factor, srs):
     """
@@ -55,8 +52,9 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
 
     lonlat_proj = '+init=epsg:4326'
 
-    prj = mapnik.Projection(srs)
-    earth_width = abs(prj.forward(mapnik.Coord(-180, 0)).x * 2)
+    prj = Proj(srs)
+    x, _ = prj(-180, 0)
+    earth_width = abs(x * 2)
     scales = {}
 
     # lonlat projs
