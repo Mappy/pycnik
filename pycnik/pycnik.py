@@ -25,11 +25,7 @@ from os.path import exists, join, dirname, abspath, isabs
 from itertools import groupby
 
 from lxml.etree import Element, SubElement, CDATA, tostring
-
-try:
-    import mapnik
-except ImportError:
-    import mapnik2 as mapnik
+from pyproj import Proj
 
 from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
@@ -38,7 +34,8 @@ PIXEL_SIZE = 0.00028
 
 # assume that a pixel on a screen is 3.55714704265e-09 on each side for latlon
 # projs
-PIXEL_SIZE_DEG= 3.55714704265e-09
+PIXEL_SIZE_DEG = 3.55714704265e-09
+
 
 def compute_scales(tile_size, nlevels, zoom_factor, srs):
     """
@@ -55,8 +52,9 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
 
     lonlat_proj = '+init=epsg:4326'
 
-    prj = mapnik.Projection(srs)
-    earth_width = abs(prj.forward(mapnik.Coord(-180, 0)).x * 2)
+    prj = Proj(srs)
+    x, _ = prj(-180, 0)
+    earth_width = abs(x * 2)
     scales = {}
 
     # lonlat projs
@@ -81,6 +79,7 @@ def compute_scales(tile_size, nlevels, zoom_factor, srs):
         }
 
     return scales
+
 
 def checktype(value, typ):
     """
@@ -214,10 +213,10 @@ def translate(source, output_file=None):
         root.attrib[replace_underscore(elem)] = str(value)
 
     metawriters = [metaw for metaw in source.__dict__.itervalues()
-        if isinstance(metaw, source.MetaWriter)]
+                   if isinstance(metaw, source.MetaWriter)]
 
     metacollectors = [metaw for metaw in source.__dict__.itervalues()
-        if isinstance(metaw, source.MetaCollector)]
+                      if isinstance(metaw, source.MetaCollector)]
 
     # metawriters
     for meta in metawriters:
@@ -239,7 +238,7 @@ def translate(source, output_file=None):
 
     # retrieve all instances of Layer
     layers = [layer for layer in source.__dict__.itervalues()
-        if isinstance(layer, source.Layer)]
+              if isinstance(layer, source.Layer)]
 
     # remove pointers to the same id
     layers = list(set(layers))
@@ -281,8 +280,7 @@ def translate(source, output_file=None):
                 param = SubElement(datasrc, "Parameter", name=name)
                 param.text = value
             if getattr(lay, "table", None):
-                SubElement(datasrc, "Parameter",
-                    name="table").text = CDATA(lay.table)
+                SubElement(datasrc, "Parameter", name="table").text = CDATA(lay.table)
 
         # get all other attributes
         for attr, value in lay.__dict__.items():
@@ -293,16 +291,13 @@ def translate(source, output_file=None):
             laytag.attrib[replace_underscore(attr)] = str(value)
 
     if not output_file:
-        return tostring(root,
-            pretty_print=True,
-            xml_declaration=True,
-            encoding='utf-8')
+        return tostring(root, pretty_print=True, xml_declaration=True, encoding='utf-8')
 
     with open(output_file, 'wb') as out:
         out.write(tostring(root,
-            pretty_print=True,
-            xml_declaration=True,
-            encoding='utf-8'))
+                           pretty_print=True,
+                           xml_declaration=True,
+                           encoding='utf-8'))
 
 
 def copy_style(filename, features=[], exclude=[]):
@@ -340,7 +335,7 @@ def copy_style(filename, features=[], exclude=[]):
                 continue
 
             if isinstance(attr, (str, int, float, dict, tuple, list, Map,
-                    MetaWriter, MetaCollector, Style, Layer)):
+                                 MetaWriter, MetaCollector, Style, Layer)):
                 features.append(attr)
 
     for feature in features:

@@ -34,14 +34,7 @@ def install_requires():
     """
     don't try to override mapnik installation with the pypi version
     """
-    req = ['lxml']
-    try:
-        import mapnik
-    except ImportError:
-        try:
-            import mapnik2
-        except:
-            req.append('mapnik2')
+    req = ['lxml', 'pyproj']
     return req
 
 develop_requirements = install_requires() + ['nose>=1.0']
