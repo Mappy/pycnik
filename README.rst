@@ -4,9 +4,9 @@ pycnik
 
 .. image:: https://secure.travis-ci.org/Mappy/pycnik.png
    :target: http://travis-ci.org/Mappy/pycnik
-.. image:: https://pypip.in/v/pycnik/badge.png
+.. image:: https://img.shields.io/pypi/v/pycnik.svg
    :target: https://crate.io/packages/pycnik
-.. image:: https://pypip.in/d/pycnik/badge.png
+.. image:: https://img.shields.io/pypi/dm/pycnik.svg
    :target: https://crate.io/packages/pycnik
 .. image:: https://d2weczhvl823v0.cloudfront.net/Mappy/pycnik/trend.png
    :alt: Bitdeli badge
