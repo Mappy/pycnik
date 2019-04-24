@@ -107,8 +107,8 @@ class Style(tuple):
         {'line': {'fill': '#ffffff', ...} }, # zoom 2
     )
     """
-    def __init__(self, iterable):
-        super(Style, self).__init__(iterable)
+    def __new__(cls, iterable):
+        return super(Style, cls).__new__(cls, iterable)
 
     def __setitem__(self, key, val):
         """
@@ -124,7 +124,7 @@ class Style(tuple):
                 stop = len(self) - 1
             if not start:
                 start = 0
-            for lev in xrange(start, stop + 1):
+            for lev in range(start, stop + 1):
                 self[lev].update(dict_merge(self[lev], val))
 
         elif isinstance(key, int):
@@ -167,5 +167,5 @@ class Layer(object):
         if stylename in self.styles:
             return self.styles[stylename]
 
-        self.styles[stylename] = Style([{} for _ in xrange(self.nlevels)])
+        self.styles[stylename] = Style([{} for _ in range(self.nlevels)])
         return self.styles[stylename]

@@ -2,7 +2,7 @@
 # -*- encoding=utf-8 -*-
 import argparse
 
-__version__ = '1.5.dev'
+__version__ = '1.6.dev'
 
 
 def main():

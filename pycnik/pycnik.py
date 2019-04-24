@@ -27,7 +27,7 @@ from itertools import groupby
 from lxml.etree import Element, SubElement, CDATA, tostring
 from pyproj import Proj
 
-from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
+from pycnik.model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
 # assume that a pixel on a screen is 0.28mm on each side for metric projs
 PIXEL_SIZE = 0.00028
@@ -121,7 +121,7 @@ def write_style(root, stylename, style, scales):
 
     # adding idx to levels and sorting by dict values
     # in order to group rules
-    ordered_rules = sorted(zip(range(30), style), key=lambda elem: elem[1])
+    ordered_rules = sorted(zip(range(30), style), key=lambda elem: sorted(elem[1]))
 
     grouped_rules = []
     # grouping with dict
@@ -212,10 +212,10 @@ def translate(source, output_file=None):
             continue
         root.attrib[replace_underscore(elem)] = str(value)
 
-    metawriters = [metaw for metaw in source.__dict__.itervalues()
+    metawriters = [metaw for metaw in source.__dict__.values()
                    if isinstance(metaw, source.MetaWriter)]
 
-    metacollectors = [metaw for metaw in source.__dict__.itervalues()
+    metacollectors = [metaw for metaw in source.__dict__.values()
                       if isinstance(metaw, source.MetaCollector)]
 
     # metawriters
@@ -237,7 +237,7 @@ def translate(source, output_file=None):
             metatag.attrib[replace_underscore(attr)] = value
 
     # retrieve all instances of Layer
-    layers = [layer for layer in source.__dict__.itervalues()
+    layers = [layer for layer in source.__dict__.values()
               if isinstance(layer, source.Layer)]
 
     # remove pointers to the same id
