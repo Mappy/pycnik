@@ -127,15 +127,12 @@ def write_style(root, stylename, style, scales):
         if isinstance(item, dict):
             for ii in item.values():
                 if isinstance(ii, list):
-                    print("I have a list : {}".format(ii))
                     jj += len(ii)
                     jj += keyfunction(ii)
                 if isinstance(ii, dict):
-                    print("I have a dict : {}".format(ii))
                     jj += len(ii)
                     jj += keyfunction(ii)
                 else:
-                    print("Not a list : {}".format(ii))
                     jj += 1
         if isinstance(item, list) and not isinstance(item, str):
             for ii in item:
