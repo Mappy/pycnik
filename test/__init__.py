@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+import six
 from lxml import etree
 from os.path import dirname, join
-from StringIO import StringIO
+if six.PY2:
+    from StringIO import StringIO
+else:
+    from io import BytesIO
 
 from pycnik.pycnik import translate, import_style
 
@@ -14,5 +18,8 @@ def resource(name):
 
 def parse_resource(name):
     source = import_style(resource(name))
-    output = StringIO(translate(source))
+    if six.PY2:
+        output = StringIO(translate(source))
+    else:
+        output = BytesIO(translate(source))
     return etree.parse(output)

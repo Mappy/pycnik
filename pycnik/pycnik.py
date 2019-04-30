@@ -23,11 +23,12 @@ import inspect
 import pprint
 from os.path import exists, join, dirname, abspath, isabs
 from itertools import groupby
-
+from collections import OrderedDict
+import six
+import sys
 from lxml.etree import Element, SubElement, CDATA, tostring
 from pyproj import Proj
-
-from model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
+from .model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
 
 # assume that a pixel on a screen is 0.28mm on each side for metric projs
 PIXEL_SIZE = 0.00028
@@ -121,7 +122,33 @@ def write_style(root, stylename, style, scales):
 
     # adding idx to levels and sorting by dict values
     # in order to group rules
-    ordered_rules = sorted(zip(range(30), style), key=lambda elem: elem[1])
+    def keyfunction(item):
+        jj = len(item)
+        if isinstance(item, dict):
+            for ii in item.values():
+                if isinstance(ii, list):
+                    print("I have a list : {}".format(ii))
+                    jj += len(ii)
+                    jj += keyfunction(ii)
+                if isinstance(ii, dict):
+                    print("I have a dict : {}".format(ii))
+                    jj += len(ii)
+                    jj += keyfunction(ii)
+                else:
+                    print("Not a list : {}".format(ii))
+                    jj += 1
+        if isinstance(item, list) and not isinstance(item, str):
+            for ii in item:
+                if isinstance(ii, list):
+                    jj += len(ii)
+                    jj += keyfunction(ii)
+                if isinstance(ii, dict):
+                    jj += len(ii)
+                    jj += keyfunction(ii)
+                else:
+                    jj += 1
+        return jj
+    ordered_rules = sorted(zip(range(30), style), key=lambda elem: keyfunction(elem[1]))
 
     grouped_rules = []
     # grouping with dict
@@ -212,10 +239,10 @@ def translate(source, output_file=None):
             continue
         root.attrib[replace_underscore(elem)] = str(value)
 
-    metawriters = [metaw for metaw in source.__dict__.itervalues()
+    metawriters = [metaw for metaw in six.itervalues(source.__dict__)
                    if isinstance(metaw, source.MetaWriter)]
 
-    metacollectors = [metaw for metaw in source.__dict__.itervalues()
+    metacollectors = [metaw for metaw in six.itervalues(source.__dict__)
                       if isinstance(metaw, source.MetaCollector)]
 
     # metawriters
@@ -237,7 +264,7 @@ def translate(source, output_file=None):
             metatag.attrib[replace_underscore(attr)] = value
 
     # retrieve all instances of Layer
-    layers = [layer for layer in source.__dict__.itervalues()
+    layers = [layer for layer in six.itervalues(source.__dict__)
               if isinstance(layer, source.Layer)]
 
     # remove pointers to the same id
@@ -283,7 +310,7 @@ def translate(source, output_file=None):
                 SubElement(datasrc, "Parameter", name="table").text = CDATA(lay.table)
 
         # get all other attributes
-        for attr, value in lay.__dict__.items():
+        for attr, value in six.iteritems(lay.__dict__):
             if attr.lower() in ("styles", "srs", "datasource", "table", "nlevels"):
                 continue
             if inspect.isbuiltin(getattr(lay, attr)) or attr.startswith('_'):

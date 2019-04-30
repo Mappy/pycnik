@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from nose.tools import *
-
+from lxml import etree
 from test import parse_resource
 
 
@@ -26,7 +26,8 @@ class TestStyle(object):
     def test_same_symbolizer_in_single_style(self):
         '''Should serialize same symbolizer in a single style'''
         xml = parse_resource('natural.py')
-        assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_blue"]/Rule[2]/LineSymbolizer')), 2)
+        # For debugging purpose
+        assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_blue"]/Rule[2]/LineSymbolizer')), 2, etree.tostring(xml, pretty_print=True))
         assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_blue"]/Rule[1]/LineSymbolizer')), 1)
 
     def test_linePatternSymbolizer_in_style(self):
@@ -37,5 +38,5 @@ class TestStyle(object):
     def test_same_symbolizer_inheritance(self):
         '''Should inherite same symbolizer in a single style'''
         xml = parse_resource('natural.py')
-        assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_green"]/Rule[2]/LineSymbolizer')), 2)
+        assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_green"]/Rule[2]/LineSymbolizer')), 2, etree.tostring(xml, pretty_print=True))
         assert_equal(len(xml.xpath('/Map/Style[@name="country boundaries_green"]/Rule[1]/LineSymbolizer')), 2)

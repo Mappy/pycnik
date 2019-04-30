@@ -1,3 +1,4 @@
+import six
 from nose.tools import *
 from test import parse_resource
 
@@ -54,7 +55,7 @@ class TestCopyLayers(object):
         assert_equal(node.attrib['srs'], "+init=epsg:4326")
 
         from lxml import etree
-        print etree.tostring(xml, pretty_print=True)
+        print(etree.tostring(xml, pretty_print=True))
         nodes = xml.xpath('/Map/Style[@name="natural_earth_default"]/Rule')
         assert_equal(len(nodes), 2)
         for node in nodes:
