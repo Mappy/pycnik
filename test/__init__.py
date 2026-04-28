@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+from io import BytesIO
 from lxml import etree
 from os.path import dirname, join
-from StringIO import StringIO
 
 from pycnik.pycnik import translate, import_style
 
@@ -14,5 +14,5 @@ def resource(name):
 
 def parse_resource(name):
     source = import_style(resource(name))
-    output = StringIO(translate(source))
+    output = BytesIO(translate(source))
     return etree.parse(output)

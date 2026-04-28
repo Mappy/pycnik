@@ -47,11 +47,11 @@ Testing
 
 Dependencies:
 
-    $ pip install -r requirements/test.pip
+    $ pip install -r requirements-dev.txt
 
-To run the tests with nose:
+To run the tests with pytest:
 
-    $ nosetests -v
+    $ pytest -q
 
 
 Getting started
@@ -133,7 +133,5 @@ Generate mapnik XML
 -------------------
 
     $ pycnik example.py -o example.xml
-
-
 
 

@@ -18,16 +18,38 @@
 Simple Translator from Python code to Mapnik XML stylesheet.
 
 """
-import imp
+import importlib.util
+from importlib.machinery import SourceFileLoader
 import inspect
 import pprint
+import sys
+import types
 from os.path import exists, join, dirname, abspath, isabs
 from itertools import groupby
 
 from lxml.etree import Element, SubElement, CDATA, tostring
 from pyproj import Proj
 
-from pycnik.model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
+from .model import SYMBOLIZERS, Map, MetaWriter, MetaCollector, Style, Layer
+
+
+def _ensure_imp_compat():
+    if "imp" in sys.modules:
+        return
+
+    imp_module = types.ModuleType("imp")
+
+    def load_source(name, pathname):
+        loader = SourceFileLoader(name, pathname)
+        spec = importlib.util.spec_from_loader(name, loader)
+        if spec is None:
+            raise ImportError("Unable to load module spec for %s" % pathname)
+        module = importlib.util.module_from_spec(spec)
+        loader.exec_module(module)
+        return module
+
+    imp_module.load_source = load_source
+    sys.modules["imp"] = imp_module
 
 # assume that a pixel on a screen is 0.28mm on each side for metric projs
 PIXEL_SIZE = 0.00028
@@ -36,6 +58,43 @@ PIXEL_SIZE = 0.00028
 # projs
 PIXEL_SIZE_DEG = 3.55714704265e-09
 
+LAYER_TYPE = {
+    'LINE'    : 'line', 
+    'POLYGON' : 'polygon', 
+    'POINT'   : 'symbol', 
+    'RASTER'  : 'raster', 
+    'SHIELD'  : 'shield'
+}
+
+JSON_ELEMENT_BY_TYPE = {
+    'line' : {
+        'stroke-width': {'dictname': 'paint', 'dictkey': 'line-width', 'dictvaluetype': 'int'},
+        'stroke': {'dictname': 'paint', 'dictkey': 'line-color', 'dictvaluetype': 'str', 'dictvalueconverter': 'rgb_to_hexa'},
+        'stroke-linejoin': {'dictname': 'layout', 'dictkey': 'line-join', 'dictvaluetype': 'str'},
+        'stroke-linecap': {'dictname': 'layout', 'dictkey': 'line-cap', 'dictvaluetype': 'str'},
+        'stroke-opacity': {'dictname': 'paint', 'dictkey': 'line-opacity', 'dictvaluetype': 'float'},
+        'stroke-dasharray': {'dictname': 'paint', 'dictkey': 'line-dasharray', 'dictvaluetype': 'array'}
+    },
+    'polygon' : {
+        'fill': {'dictname': 'paint', 'dictkey': 'fill-color', 'dictvaluetype': 'str', 'dictvalueconverter': 'rgb_to_hexa'},
+        'fill-opacity': {'dictname': 'paint', 'dictkey': 'fill-opacity', 'dictvaluetype': 'float'}
+    },
+    'label' : {
+        'face-name': {'dictname': None, 'dictkey': 'text-font', 'dictvaluetype': 'array'},
+        'value': {'dictname': None, 'dictkey': 'text-field', 'dictvaluetype': 'str', 'dictvalueconverter': [{'replace': ['[','{']}, {'replace': [']','}']}]},
+        'size': {'dictname': None, 'dictkey': 'text-size', 'dictvaluetype': 'int'},
+        'wrap-width': {'dictname': None, 'dictkey': 'text-max-width', 'dictvaluetype': 'int'},
+        'vertical-alignment': {'dictname': None, 'dictkey': 'text-anchor', 'dictvaluetype': 'str'},
+        'fill': {'dictname': 'paint', 'dictkey': 'text-color', 'dictvaluetype': 'str', 'dictvalueconverter': 'rgb_to_hexa'},
+        'halo-fill': {'dictname': 'paint', 'dictkey': 'text-halo-color', 'dictvaluetype': 'str', 'dictvalueconverter': 'rgb_to_hexa'},
+        'halo-radius': {'dictname': 'paint', 'dictkey': 'text-halo-width', 'dictvaluetype': 'int'},
+        'dx': {'dictname': None, 'dictkey': 'text-offset', 'dictvaluetype': 'array', 'dictvalueconverter': 'first'},
+        'dy': {'dictname': None, 'dictkey': 'text-offset', 'dictvaluetype': 'array', 'dictvalueconverter': 'append'}
+    },
+    'shield' : {
+        'file': {'layout': None, 'dictkey': 'icon-image', 'dictvaluetype': 'str'}
+    }
+}
 
 def compute_scales(tile_size, nlevels, zoom_factor, srs):
     """
@@ -90,18 +149,26 @@ def checktype(value, typ):
     raise TypeError("%s is not a %s" % (value, str(typ)))
 
 
+def _load_module_from_file(filepath):
+    _ensure_imp_compat()
+    filepath = abspath(filepath)
+    module_name = "pycnik_style_%s" % abs(hash(filepath))
+    loader = SourceFileLoader(module_name, filepath)
+    spec = importlib.util.spec_from_loader(module_name, loader)
+    if spec is None:
+        raise ImportError("Unable to load module spec for %s" % filepath)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
 def import_style(stylesheet):
     """
     import python style as module
     """
     if not exists(stylesheet):
         raise IOError("file not found")
-    try:
-        config = imp.load_source(stylesheet[:-3], stylesheet)
-    except ImportError:
-        print("Unable to import stylesheet file %s" % stylesheet)
-
-    return config
+    return _load_module_from_file(stylesheet)
 
 
 def replace_underscore(value):
@@ -119,9 +186,18 @@ def write_style(root, stylename, style, scales):
     """
     tagstyle = SubElement(root, "Style", name=stylename)
 
+    def to_sortable(value):
+        if isinstance(value, dict):
+            return ("dict", tuple(sorted((k, to_sortable(v)) for k, v in value.items())))
+        if isinstance(value, list):
+            return ("list", tuple(to_sortable(v) for v in value))
+        if isinstance(value, tuple):
+            return ("tuple", tuple(to_sortable(v) for v in value))
+        return ("scalar", value)
+
     # adding idx to levels and sorting by dict values
     # in order to group rules
-    ordered_rules = sorted(zip(range(30), style), key=lambda elem: sorted(elem[1]))
+    ordered_rules = sorted(zip(range(len(style)), style), key=lambda elem: to_sortable(elem[1]))
 
     grouped_rules = []
     # grouping with dict
@@ -186,7 +262,34 @@ def write_style(root, stylename, style, scales):
                     symb.attrib[symatt] = str(symval)
 
 
-def translate(source, output_file=None):
+def translate(source, output_file=None, mapbox=False):
+    if mapbox:
+        return translate_to_mapbox_json(source, output_file)
+    return translate_to_mapnik_xml(source, output_file)
+
+
+def translate_to_mapbox_json(source, output_file):
+    print("Source: {}".format(source))
+    # retrieve all instances of Layer
+    layers = [layer for layer in source.__dict__.values()
+              if isinstance(layer, source.Layer)]
+
+    # remove pointers to the same id
+    layers = list(set(layers))
+    # reorder style list
+    layers = sorted(layers, key=lambda lay: source.Layer.painter.index(lay))
+
+    print("Layers info : ")
+    pprint.pprint(layers)
+
+    # writing all styles at the top of the xml
+    for lay in layers:
+        for stylname, style in lay.styles.items():
+            # making styles tags
+            pprint.pprint([stylename, style]) 
+
+
+def translate_to_mapnik_xml(source, output_file):
     """
     TODO: check styles duplicatas
 
@@ -300,7 +403,7 @@ def translate(source, output_file=None):
                            encoding='utf-8'))
 
 
-def copy_style(filename, features=[], exclude=[]):
+def copy_style(filename, features=None, exclude=None):
     '''
     Copy style from another stylesheet into the current one.
 
@@ -308,22 +411,32 @@ def copy_style(filename, features=[], exclude=[]):
     :param features: a feature list to copy. If empty, all features are copied.
     :param exclude: a feature list to exclude from copy.
     '''
-    stack = inspect.stack()[1]
-    caller = inspect.getmodule(stack[0])
+    caller_frame = inspect.stack()[1][0]
+    caller_module = inspect.getmodule(caller_frame)
+    caller_file = None
+
+    if caller_module is not None:
+        caller_file = getattr(caller_module, "__file__", None)
+    if caller_file is None:
+        caller_file = caller_frame.f_globals.get("__file__")
+    if caller_file is None:
+        raise ValueError("Unable to determine caller file for copy_style")
+
+    if features is None:
+        features = []
+    if exclude is None:
+        exclude = []
 
     if not filename.endswith('.py'):
         raise ValueError("Stylesheet %s is not a python file" % filename)
 
     if not isabs(filename):
-        filename = abspath(join(dirname(caller.__file__), filename))
+        filename = abspath(join(dirname(caller_file), filename))
 
     if not exists(filename):
         raise IOError("File %s not found" % filename)
 
-    try:
-        stylesheet = imp.load_source(filename[:-3], filename)
-    except ImportError:
-        print("Unable to import stylesheet file %s" % filename)
+    stylesheet = _load_module_from_file(filename)
 
     if isinstance(features, str):
         features = [features]
@@ -340,4 +453,4 @@ def copy_style(filename, features=[], exclude=[]):
 
     for feature in features:
         if feature not in exclude:
-            setattr(caller, feature, getattr(stylesheet, feature))
+            caller_frame.f_globals[feature] = getattr(stylesheet, feature)
