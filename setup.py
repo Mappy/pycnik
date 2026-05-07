@@ -5,9 +5,6 @@ import re
 import sys
 from setuptools import setup
 
-if not hasattr(sys, 'version_info') or sys.version_info < (2, 7, 0, 'final'):
-    raise SystemExit("pycnik requires Python 2.7 or later.")
-
 if sys.argv[-1] == 'publish':
     os.system('python setup.py register sdist upload')
     sys.exit()
@@ -37,7 +34,7 @@ def install_requires():
     req = ['lxml', 'pyproj']
     return req
 
-develop_requirements = install_requires() + ['nose>=1.0']
+develop_requirements = install_requires() + ['pytest>=8.0']
 
 setup(
     name='pycnik',
@@ -54,14 +51,16 @@ setup(
         'Intended Audience :: Science/Research',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.13',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Utilities'
         ],
+    python_requires='>=3.13,<4',
     packages=['pycnik'],
     install_requires=install_requires(),
     extras_require={
         'develop': develop_requirements,
     },
-    entry_points=dict(console_scripts=['pycnik=pycnik:main', ]),
-    test_suite='nose.collector'
+    entry_points=dict(console_scripts=['pycnik=pycnik:main', ])
 )
